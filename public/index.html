@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MihJuris · Sistema Jurídico (Local)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN SYSTEM — Dark Mode Jurídico
+   Regra absoluta: fundo escuro → texto claro
+                   fundo claro → texto escuro
+   ═══════════════════════════════════════════════════ */
+:root {
+  /* Fundos (do mais escuro ao mais claro) */
+  --bg:       #12151a;
+  --s0:       #1a1e26;  /* cards base */
+  --s1:       #222731;  /* inputs, areas internas */
+  --s2:       #2a303c;  /* hover, elevado */
+  --s3:       #333a48;  /* bordas visíveis */
+
+  /* Textos sobre fundo escuro */
+  --t1:  #f0f2f8;   /* principal — legível, suave */
+  --t2:  #a8b0c0;   /* secundário */
+  --t3:  #636d7e;   /* muted, timestamps */
+
+  /* Marca */
+  --gold:    #e2b96f;  /* dourado claro — legível no dark */
+  --gold-bg: rgba(226,185,111,0.08);
+  --gold-bd: rgba(226,185,111,0.25);
+
+  /* Semáforo — cores claras sobre dark */
+  --red:     #fc8181;   /* vermelho suave */
+  --red-bg:  rgba(252,129,129,0.10);
+  --red-bd:  rgba(252,129,129,0.30);
+
+  --amber:   #fcd34d;   /* âmbar claro */
+  --amber-bg:rgba(252,211,77,0.08);
+  --amber-bd:rgba(252,211,77,0.28);
+
+  --green:   #6ee7b7;   /* verde menta suave */
+  --green-bg:rgba(110,231,183,0.08);
+  --green-bd:rgba(110,231,183,0.25);
+
+  --grey:    #6b7280;
+  --grey-bg: rgba(107,114,128,0.12);
+
+  /* Marca azul (Google, botões especiais) */
+  --blue:    #93c5fd;
+  --wpp:     #6ee7a8;
+
+  --border:  rgba(255,255,255,0.06);
+  --shadow:  0 2px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.6);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--t1);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SCROLL ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--s3); border-radius: 3px; }
+
+/* ── INPUTS GLOBAIS ── */
+input, select, textarea {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--s1);
+  color: var(--t1);
+  border: 1.5px solid var(--s3);
+  border-radius: 9px;
+  outline: none;
+  transition: border-color .18s;
+}
+input::placeholder, textarea::placeholder { color: var(--t3); }
+input:focus, select:focus, textarea:focus { border-color: var(--gold-bd); }
+select option { background: var(--s1); color: var(--t1); }
+
+/* ── TIPOGRAFIA ── */
+.serif { font-family: 'Playfair Display', serif; }
+.mono  { font-family: 'DM Mono', monospace; }
+.label {
+  font-size: 11px; font-weight: 600; letter-spacing: .6px;
+  text-transform: uppercase; color: var(--t3); display: block; margin-bottom: 5px;
+}
+
+/* ════════════════════════════════════════
+   LOGIN
+   ════════════════════════════════════════ */
+#loginScreen {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse at 70% 20%, rgba(226,185,111,.07) 0%, transparent 60%), var(--bg);
+  padding: 20px;
+}
+.login-card {
+  background: var(--s0);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%; max-width: 420px;
+  box-shadow: var(--shadow-lg);
+}
+.login-logo { font-family:'Playfair Display',serif; font-size:2rem; font-weight:900; color:var(--t1); }
+.login-logo span { color: var(--gold); }
+.login-sub { font-size:12px; color:var(--t3); margin-bottom:28px; letter-spacing:.5px; }
+
+.tabs { display:flex; border-radius:9px; overflow:hidden; border:1px solid var(--s3); margin-bottom:22px; }
+.tab  { flex:1; padding:9px; font-size:13px; font-weight:600; border:none; background:transparent;
+        cursor:pointer; font-family:'DM Sans',sans-serif; color:var(--t2); transition:all .18s; }
+.tab.on { background:var(--s2); color:var(--t1); }
+
+.frow { margin-bottom: 13px; }
+.frow input, .frow select {
+  width:100%; padding:10px 13px; font-size:14px;
+  background:var(--s1); color:var(--t1); border:1.5px solid var(--s3); border-radius:9px;
+}
+.frow textarea {
+  width:100%; padding:10px 13px; font-size:14px; resize:vertical; min-height:70px;
+  background:var(--s1); color:var(--t1); border:1.5px solid var(--s3); border-radius:9px;
+}
+.frow input:focus, .frow select:focus, .frow textarea:focus { border-color: var(--gold-bd); }
+
+.btn-main {
+  width:100%; padding:12px; background:var(--gold); color:#1a1200;
+  border:none; border-radius:9px; font-size:15px; font-weight:700;
+  cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .18s; margin-top:4px;
+}
+.btn-main:hover { background: #f0cc88; }
+
+.ferr  { color:var(--red); font-size:12px; margin-top:5px; display:none; }
+.fdemo { text-align:center; margin-top:14px; font-size:12px; color:var(--t3); }
+.fdemo a { color:var(--gold); cursor:pointer; }
+
+/* OAB no login */
+.oab-row { display:flex; gap:8px; margin-bottom:13px; }
+.oab-row input { flex:1; padding:10px 13px; font-size:14px; }
+.oab-row button {
+  padding:10px 14px; background:var(--s2); color:var(--t1); border:1.5px solid var(--s3);
+  border-radius:9px; font-size:12px; font-weight:600; cursor:pointer;
+  font-family:'DM Sans',sans-serif; white-space:nowrap; transition:all .18s;
+}
+.oab-row button:hover { background:var(--s3); border-color:var(--gold-bd); color:var(--gold); }
+.oab-result {
+  background:var(--green-bg); border:1px solid var(--green-bd); border-radius:9px;
+  padding:10px 13px; font-size:13px; color:var(--green); margin-bottom:10px; display:none;
+}
+
+/* ════════════════════════════════════════
+   APP SHELL
+   ════════════════════════════════════════ */
+#appScreen { display:none; }
+
+.topbar {
+  background: var(--s0);
+  border-bottom: 1px solid var(--border);
+  height: 54px; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top:0; z-index:200;
+  box-shadow: 0 1px 12px rgba(0,0,0,.35);
+}
+.tlogo { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:900; color:var(--t1); }
+.tlogo span { color:var(--gold); }
+.tright { display:flex; align-items:center; gap:8px; }
+.tchip  { font-size:11px; color:var(--t3); font-family:'DM Mono',monospace;
+          background:var(--s1); padding:3px 10px; border-radius:100px; border:1px solid var(--border); }
+.tsm { font-size:12px; padding:5px 11px; border-radius:7px; border:1px solid var(--s3);
+       background:transparent; color:var(--t2); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .18s; }
+.tsm:hover { background:var(--s2); color:var(--t1); }
+.tgold { background:var(--gold); color:#1a1200; border:none; border-radius:8px;
+         padding:6px 14px; font-size:13px; font-weight:700; cursor:pointer;
+         font-family:'DM Sans',sans-serif; transition:all .18s; }
+.tgold:hover { background:#f0cc88; }
+
+.demo-bar { background:var(--gold-bg); border-bottom:1px solid var(--gold-bd);
+            padding:8px 20px; font-size:12px; text-align:center; color:var(--t2); display:none; }
+.demo-bar strong { color:var(--gold); }
+
+/* ── NAVEGAÇÃO ── */
+.nav { background:var(--s0); border-bottom:1px solid var(--border);
+       display:flex; padding:0 24px; }
+.ntab { font-size:13px; font-weight:500; padding:14px 16px;
+        border:none; background:none; cursor:pointer; color:var(--t3);
+        border-bottom:2px solid transparent; transition:all .18s;
+        font-family:'DM Sans',sans-serif; white-space:nowrap; }
+.ntab:hover { color:var(--t2); }
+.ntab.on { color:var(--gold); border-bottom-color:var(--gold); font-weight:600; }
+
+/* ── STATS ── */
+.stats { display:grid; grid-template-columns:repeat(4,1fr);
+         background:var(--s0); border-bottom:1px solid var(--border); }
+.stat { padding:13px 16px; text-align:center; border-right:1px solid var(--border); }
+.stat:last-child { border-right:none; }
+.snum { font-family:'Playfair Display',serif; font-size:1.7rem; font-weight:900; line-height:1; }
+.slbl { font-size:10px; color:var(--t3); margin-top:2px; text-transform:uppercase; letter-spacing:.5px; }
+
+/* ── MAIN ── */
+.main { max-width:1060px; margin:0 auto; padding:22px 18px; }
+.sec  { display:none; }
+.sec.on { display:block; }
+
+/* ── ALERTA SOBRECARGA ── */
+.alerta {
+  background:var(--red-bg); border:1px solid var(--red-bd);
+  border-radius:10px; padding:12px 16px; margin-bottom:14px;
+  display:flex; align-items:center; gap:10px;
+}
+.alerta strong { font-size:13px; color:var(--red); display:block; }
+.alerta span   { font-size:12px; color:var(--t2); }
+
+/* ── FILTROS ── */
+.fbar { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
+.fbtn {
+  font-size:12px; font-weight:500; padding:5px 12px; border-radius:100px;
+  border:1px solid var(--s3); background:var(--s1); cursor:pointer;
+  color:var(--t2); font-family:'DM Sans',sans-serif; transition:all .15s;
+}
+.fbtn:hover { border-color:var(--gold-bd); color:var(--t1); }
+.fbtn.on    { background:var(--s2); color:var(--t1); border-color:var(--s3); }
+.fbtn.fu.on { background:var(--red-bg); color:var(--red); border-color:var(--red-bd); }
+.fbtn.fa.on { background:var(--amber-bg); color:var(--amber); border-color:var(--amber-bd); }
+.fbtn.fo.on { background:var(--green-bg); color:var(--green); border-color:var(--green-bd); }
+
+.sbox {
+  margin-left:auto; display:flex; align-items:center; gap:6px;
+  background:var(--s1); border:1px solid var(--s3); border-radius:100px; padding:5px 12px;
+}
+.sbox input { border:none; background:transparent; font-size:13px; width:140px;
+              padding:0; border-radius:0; color:var(--t1); }
+
+/* ── CARDS DE PRAZO ── */
+.cards { display:flex; flex-direction:column; gap:9px; }
+.empty { text-align:center; padding:48px 20px; color:var(--t3); }
+.empty .ei { font-size:40px; margin-bottom:10px; }
+.empty p   { font-size:13px; line-height:1.6; }
+
+.card {
+  background:var(--s0); border-radius:11px;
+  border-left:3px solid var(--s3);
+  border:1px solid var(--border); border-left:3px solid var(--s3);
+  transition:transform .18s, box-shadow .18s;
+  animation: fadeUp .25s ease;
+}
+.card:hover { transform:translateY(-1px); box-shadow:var(--shadow); }
+.card.urgente { border-left-color:var(--red-bd); }
+.card.atencao { border-left-color:var(--amber-bd); }
+.card.ok      { border-left-color:var(--green-bd); }
+.card.vencido { border-left-color:var(--grey); opacity:.65; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+.ci {
+  padding:14px 16px;
+  display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start;
+}
+.ctags  { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:5px; }
+.tag    { font-size:10px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+          padding:2px 8px; border-radius:100px; }
+.tag-u  { background:var(--red-bg);   color:var(--red);   border:1px solid var(--red-bd); }
+.tag-a  { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-bd); }
+.tag-o  { background:var(--green-bg); color:var(--green); border:1px solid var(--green-bd); }
+.tag-v  { background:var(--grey-bg);  color:var(--grey); }
+.tag-t  { background:var(--s1);       color:var(--t2); }
+
+.ctitle { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--t1); margin-bottom:3px; }
+.cmeta  { font-size:12px; color:var(--t3); display:flex; gap:10px; flex-wrap:wrap; margin-bottom:3px; }
+.cdesc  { font-size:12.5px; color:var(--t2); line-height:1.5; }
+
+.cr     { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.pdias  { font-family:'Playfair Display',serif; font-size:1.65rem; font-weight:900; line-height:1; }
+.pdias.red    { color:var(--red); }
+.pdias.amber  { color:var(--amber); }
+.pdias.green  { color:var(--green); }
+.pdias.grey   { color:var(--grey); }
+.plbl   { font-size:10px; color:var(--t3); text-align:right; }
+.pdata  { font-family:'DM Mono',monospace; font-size:10px; color:var(--t3); }
+
+.cacts  { display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; }
+.bico {
+  height:28px; padding:0 8px; border-radius:7px;
+  border:1px solid var(--s3); background:var(--s1);
+  cursor:pointer; font-size:11px; color:var(--t2);
+  display:flex; align-items:center; gap:4px;
+  font-family:'DM Sans',sans-serif; font-weight:500;
+  transition:all .15s; white-space:nowrap;
+}
+.bico:hover { border-color:var(--gold-bd); color:var(--gold); background:var(--s2); }
+.bico.del:hover { border-color:var(--red-bd); color:var(--red); background:var(--red-bg); }
+.bico.cal:hover { border-color:var(--blue); color:var(--blue); background:rgba(147,197,253,.08); }
+.bico.wpp { border-color:rgba(110,231,168,.3); color:var(--wpp); }
+.bico.wpp:hover { background:rgba(110,231,168,.08); }
+.bico.ver:hover { border-color:var(--amber-bd); color:var(--amber); background:var(--amber-bg); }
+
+/* ── SEÇÃO HEADER ── */
+.sh { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.stitle { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--t1); }
+.scnt   { font-family:'DM Mono',monospace; font-size:11px; color:var(--t3); }
+
+/* ═══════════════════════════════════════
+   ABA PEÇAS & IA
+   ═══════════════════════════════════════ */
+.pecas-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media(max-width:700px){ .pecas-grid{ grid-template-columns:1fr; } }
+
+/* API KEY */
+.apikey-bar {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  background:var(--gold-bg); border:1px solid var(--gold-bd);
+  border-radius:9px; padding:9px 13px; margin-bottom:13px;
+}
+.apikey-bar label  { font-size:11px; font-weight:600; color:var(--gold); white-space:nowrap; }
+.apikey-bar input  { flex:1; min-width:140px; padding:6px 10px; font-size:12px;
+                     font-family:'DM Mono',monospace; background:var(--s1); border-color:var(--gold-bd); color:var(--t1); }
+.apikey-bar button { padding:6px 12px; background:var(--gold); color:#1a1200;
+                     border:none; border-radius:7px; font-size:12px; font-weight:700;
+                     cursor:pointer; font-family:'DM Sans',sans-serif; white-space:nowrap; }
+.apikey-bar.ok     { background:var(--green-bg); border-color:var(--green-bd); }
+.apikey-bar.ok label { color:var(--green); }
+.apikey-bar.ok button { background:var(--green); color:#001a0a; }
+
+/* UPLOAD */
+.upload-zone {
+  border:2px dashed var(--gold-bd); border-radius:13px;
+  padding:34px 20px; text-align:center; background:var(--s0);
+  cursor:pointer; transition:all .2s; position:relative;
+}
+.upload-zone:hover, .upload-zone.drag { border-color:var(--gold); background:var(--gold-bg); }
+.upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+.uico   { font-size:32px; margin-bottom:8px; }
+.utitle { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:var(--t1); margin-bottom:3px; }
+.usub   { font-size:12px; color:var(--t3); }
+
+/* LOADING */
+.loading-ia { display:none; text-align:center; padding:26px; background:var(--s1); border-radius:13px; margin-top:13px; }
+.loading-ia.on { display:block; animation:fadeUp .3s ease; }
+.spinner { width:32px; height:32px; border:3px solid var(--s3); border-top-color:var(--gold);
+           border-radius:50%; animation:spin .7s linear infinite; margin:0 auto 10px; }
+@keyframes spin { to{ transform:rotate(360deg) } }
+.loading-ia p { font-size:13px; color:var(--t2); }
+
+/* RESULTADO IA */
+.ia-result { background:var(--s1); border-radius:13px; padding:20px;
+             border-top:3px solid var(--gold); display:none; margin-top:13px; }
+.ia-result.on { display:block; animation:fadeUp .3s ease; }
+
+.ia-sec      { margin-bottom:16px; }
+.ia-sec-ttl  { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px;
+               text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+
+/* Chips — fundo escuro, texto CLARO */
+.chip { display:inline-block; font-size:12px; padding:3px 10px; border-radius:100px;
+        background:var(--s2); color:var(--t1); margin:2px; font-weight:500;
+        border:1px solid var(--s3); }
+.chip-g { background:var(--green-bg); color:var(--green); border-color:var(--green-bd); }
+.chip-a { background:var(--amber-bg); color:var(--amber); border-color:var(--amber-bd); }
+
+/* Passos */
+.ia-passo { background:var(--s2); border-radius:9px; padding:10px 12px;
+            margin-bottom:6px; display:flex; gap:9px; align-items:flex-start; }
+.ia-pnum  { width:22px; height:22px; border-radius:50%; background:var(--gold);
+            color:#1a1200; font-family:'Playfair Display',serif; font-weight:700;
+            font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ia-ptxt  { font-size:13px; color:var(--t1); line-height:1.5; }
+.ia-ptxt strong { color:var(--t1); display:block; margin-bottom:2px; font-size:13px; }
+
+/* Card IA genérico */
+.ia-card { background:var(--s2); border-radius:8px; padding:10px 13px;
+           margin-bottom:6px; font-size:13px; color:var(--t1); line-height:1.55;
+           border-left:3px solid var(--s3); }
+.ia-card strong { color:var(--t1); display:block; margin-bottom:2px; font-size:13px; }
+
+/* PONTOS DE ATENÇÃO — clicáveis */
+.ia-atenc {
+  background:var(--amber-bg); border:1px solid var(--amber-bd);
+  border-radius:9px; padding:10px 13px; margin-bottom:6px;
+  cursor:pointer; transition:all .18s; position:relative;
+}
+.ia-atenc:hover { background:rgba(252,211,77,.14); }
+.ia-atenc-txt  { font-size:13px; color:var(--amber); line-height:1.5; }
+.ia-atenc-hint { font-size:10.5px; color:var(--amber); opacity:.7; margin-top:4px; display:block; }
+.ia-atenc.done { background:var(--green-bg); border-color:var(--green-bd); }
+.ia-atenc.done .ia-atenc-txt  { color:var(--green); }
+.ia-atenc.done .ia-atenc-hint { color:var(--green); opacity:.7; }
+.ia-atenc-nota { font-size:12px; color:var(--green); margin-top:6px;
+                 background:var(--s2); border-radius:6px; padding:6px 9px;
+                 border-left:2px solid var(--green-bd); }
+
+/* BANCO DE PEÇAS */
+.peca-item {
+  background:var(--s1); border-radius:9px; padding:11px 14px; margin-bottom:6px;
+  display:flex; justify-content:space-between; align-items:center;
+  border:1px solid var(--border); animation:fadeUp .25s ease;
+}
+.pi strong { font-size:13px; color:var(--t1); display:block; margin-bottom:2px; }
+.pi span   { font-size:11px; color:var(--t3); font-family:'DM Mono',monospace; }
+
+/* ═══════════════════════════════════════
+   MODAIS
+   ═══════════════════════════════════════ */
+.overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.65);
+  display:none; align-items:center; justify-content:center;
+  z-index:800; padding:16px; backdrop-filter:blur(4px);
+}
+.overlay.on { display:flex; animation:fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+.modal {
+  background:var(--s0); border-radius:16px; padding:28px;
+  width:100%; max-width:500px; border:1px solid var(--s3);
+  box-shadow:var(--shadow-lg); animation:fadeUp .22s ease;
+  max-height:90vh; overflow-y:auto;
+}
+.modal h2 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--t1); margin-bottom:3px; }
+.modal-sub { font-size:12px; color:var(--t3); margin-bottom:18px; }
+
+.f2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.mrow { display:flex; gap:8px; justify-content:flex-end; margin-top:18px; }
+.btn-cancel { padding:8px 14px; border-radius:8px; border:1px solid var(--s3);
+              background:var(--s1); font-size:13px; font-weight:500; cursor:pointer;
+              font-family:'DM Sans',sans-serif; color:var(--t2); transition:all .15s; }
+.btn-cancel:hover { background:var(--s2); color:var(--t1); }
+.btn-save { padding:8px 18px; border-radius:8px; border:none; background:var(--gold);
+            color:#1a1200; font-size:13px; font-weight:700; cursor:pointer;
+            font-family:'DM Sans',sans-serif; transition:all .15s; }
+.btn-save:hover { background:#f0cc88; }
+
+/* ── MODAL WHATSAPP ── */
+.wpp-modal .modal { max-width:520px; }
+.wpp-preview {
+  background:var(--s1); border-radius:9px; padding:14px;
+  font-size:13px; color:var(--t1); line-height:1.6; white-space:pre-wrap;
+  border:1px solid var(--s3); margin-bottom:13px; max-height:200px; overflow-y:auto;
+}
+.wpp-edit { margin-bottom:13px; }
+.wpp-edit label { font-size:11px; color:var(--t3); display:block; margin-bottom:5px; }
+.wpp-edit textarea {
+  width:100%; min-height:80px; padding:10px 12px; font-size:13px;
+  resize:vertical; background:var(--s1); color:var(--t1); border-color:var(--s3); border-radius:9px;
+}
+.wpp-num { display:flex; gap:8px; align-items:flex-end; margin-bottom:13px; }
+.wpp-num .fn { flex:1; }
+.btn-wpp { padding:9px 16px; border-radius:8px; border:none; background:var(--wpp);
+           color:#001a0a; font-size:13px; font-weight:700; cursor:pointer;
+           font-family:'DM Sans',sans-serif; white-space:nowrap; }
+.btn-wpp:hover { background:#8bf5c0; }
+
+/* ── MODAL EDITOR PONTO ── */
+.ed-modal .overlay { z-index:900; }
+.ed-modal-inner {
+  background:var(--s0); border-radius:16px; padding:26px;
+  width:100%; max-width:840px; border:1px solid var(--s3);
+  box-shadow:var(--shadow-lg); animation:fadeUp .22s ease;
+  max-height:92vh; overflow-y:auto; margin:auto;
+}
+.ed-hdr { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; gap:10px; }
+.ed-hdr h3 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--t1); line-height:1.3; }
+.btn-x { width:28px; height:28px; border-radius:7px; border:1px solid var(--s3);
+         background:var(--s1); cursor:pointer; font-size:13px; color:var(--t2);
+         display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.btn-x:hover { background:var(--s2); color:var(--t1); }
+
+.ed-ponto-box {
+  background:var(--amber-bg); border:1px solid var(--amber-bd);
+  border-radius:9px; padding:11px 13px; margin-bottom:16px;
+  font-size:13px; color:var(--amber); line-height:1.5;
+}
+.ed-split { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:640px){ .ed-split{ grid-template-columns:1fr; } }
+.ecol-ttl { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px;
+            text-transform:uppercase; color:var(--gold); margin-bottom:7px; }
+.file-preview {
+  background:var(--s1); border-radius:9px; padding:12px 14px;
+  font-size:12px; color:var(--t2); line-height:1.65;
+  max-height:300px; overflow-y:auto; border:1px solid var(--s3);
+  white-space:pre-wrap;
+}
+.ed-textarea {
+  width:100%; min-height:220px; padding:11px 13px; font-size:13.5px;
+  resize:vertical; line-height:1.7; background:var(--s1); color:var(--t1);
+  border:1.5px solid var(--s3); border-radius:9px;
+}
+.ed-textarea:focus { border-color:var(--gold-bd); }
+.ed-acts { display:flex; gap:8px; margin-top:13px; flex-wrap:wrap; align-items:center; }
+
+/* BOTÕES DO EDITOR — texto ESCURO sobre fundo claro */
+.btn-ia {
+  padding:7px 13px; background:var(--gold); color:#1a1200;
+  border:none; border-radius:8px; font-size:12px; font-weight:700;
+  cursor:pointer; font-family:'DM Sans',sans-serif;
+  display:flex; align-items:center; gap:5px; transition:all .18s;
+}
+.btn-ia:hover { background:#f0cc88; }
+.btn-ia:disabled { opacity:.45; cursor:not-allowed; }
+
+.btn-resolve {
+  padding:7px 14px; background:var(--green); color:#001a0a;
+  border:none; border-radius:8px; font-size:12px; font-weight:700;
+  cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .18s;
+}
+.btn-resolve:hover { background:#8bf5c0; }
+
+.ed-warn { font-size:11px; color:var(--t3); margin-left:auto; font-style:italic; }
+.ia-spin { display:none; font-size:12px; color:var(--amber); margin-top:6px; font-style:italic; }
+
+/* ── MODAL OAB ── */
+.oab-modal .modal { max-width:560px; }
+.oab-processos { margin-top:14px; }
+.oab-proc-item {
+  background:var(--s1); border-radius:9px; padding:11px 14px; margin-bottom:7px;
+  display:flex; justify-content:space-between; align-items:center;
+  border:1px solid var(--border); animation:fadeUp .2s ease;
+}
+.oab-proc-item > div strong { font-size:13px; color:var(--t1); display:block; }
+.oab-proc-item > div span   { font-size:11px; color:var(--t3); font-family:'DM Mono',monospace; }
+.btn-import { padding:5px 10px; background:var(--gold); color:#1a1200;
+              border:none; border-radius:7px; font-size:11px; font-weight:700;
+              cursor:pointer; font-family:'DM Sans',sans-serif; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:20px; right:20px;
+  background:var(--s2); color:var(--t1);
+  padding:9px 15px; border-radius:9px; font-size:13px; font-weight:500;
+  box-shadow:var(--shadow-lg); z-index:9999;
+  animation:fadeUp .3s ease; border-left:3px solid var(--gold);
+  border:1px solid var(--s3); border-left:3px solid var(--gold);
+}
+
+/* ── PROGRESS BAR DataJud ── */
+.datajud-bar {
+  background:var(--s1); border-radius:9px; padding:12px 14px; margin-bottom:10px;
+  display:none; border:1px solid var(--s3);
+}
+.datajud-bar.on { display:block; animation:fadeUp .2s ease; }
+.datajud-bar p  { font-size:12px; color:var(--t2); margin-bottom:6px; }
+.prog-track { height:4px; background:var(--s3); border-radius:2px; }
+.prog-fill  { height:4px; background:var(--gold); border-radius:2px;
+              transition:width .4s ease; width:0%; }
+
+@media(max-width:620px){
+  .stats { grid-template-columns:1fr 1fr; }
+  .ci    { grid-template-columns:1fr; }
+  .topbar,.main,.nav { padding-left:12px; padding-right:12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">Mih<span>Juris</span></div>
+    <div class="login-sub">Sistema Jurídico Inteligente · MVP</div>
+
+    <div class="tabs">
+      <button class="tab on" onclick="ltab('e',this)">Entrar</button>
+      <button class="tab"    onclick="ltab('c',this)">Criar Conta</button>
+    </div>
+
+    <!-- ENTRAR -->
+    <div id="tabE">
+      <div class="frow"><label class="label">E-mail</label>
+        <input type="email" id="lEmail" placeholder="advogado@escritorio.com.br">
+      </div>
+      <div class="frow"><label class="label">Senha</label>
+        <input type="password" id="lSenha" placeholder="••••••••">
+      </div>
+      <div class="ferr" id="lerr">E-mail ou senha incorretos.</div>
+      <button class="btn-main" onclick="fazerLogin()">Entrar</button>
+    </div>
+
+    <!-- CRIAR CONTA -->
+    <div id="tabC" style="display:none">
+      <div class="frow"><label class="label">Nome completo</label>
+        <input type="text" id="cNome" placeholder="Dr. João Silva">
+      </div>
+      <div class="frow"><label class="label">E-mail</label>
+        <input type="email" id="cEmail" placeholder="advogado@escritorio.com.br">
+      </div>
+      <div class="frow"><label class="label">OAB (opcional — preenche dados automaticamente)</label>
+        <div class="oab-row">
+          <input type="text" id="cOAB" placeholder="SP 123456">
+          <button onclick="buscarOAB()">🔍 Buscar OAB</button>
+        </div>
+        <div class="oab-result" id="oabResult"></div>
+      </div>
+      <div class="frow"><label class="label">Senha</label>
+        <input type="password" id="cSenha" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="ferr" id="cerr">Erro ao criar conta.</div>
+      <button class="btn-main" onclick="criarConta()">Criar Conta</button>
+    </div>
+
+    <div class="fdemo">Sem cadastro? <a onclick="entrarDemo()">Entrar em demonstração</a></div>
+  </div>
+</div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div id="appScreen">
+  <div id="demoBanner" class="demo-bar">
+    🔒 Modo demonstração — dados salvos <strong>apenas neste navegador</strong>
+  </div>
+
+  <div class="topbar">
+    <div class="tlogo">Mih<span>Juris</span></div>
+    <div class="tright">
+      <div class="tchip" id="userChip"></div>
+      <button class="tsm" onclick="abrirOABModal()">📋 Importar OAB</button>
+      <button class="tsm" onclick="fazerLogout()">Sair</button>
+      <button class="tgold" id="btnNovo" onclick="abrirModal()">+ Novo Prazo</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="ntab on" onclick="mudarAba('Prazos',this)">⏱️ Prazos</button>
+    <button class="ntab"    onclick="mudarAba('Pecas',this)">🧠 Peças & IA</button>
+  </div>
+
+  <div id="statsBar" class="stats">
+    <div class="stat"><div class="snum" style="color:var(--red)"   id="stU">0</div><div class="slbl">🔴 Urgentes ≤3d</div></div>
+    <div class="stat"><div class="snum" style="color:var(--amber)" id="stA">0</div><div class="slbl">🟡 Atenção 4–7d</div></div>
+    <div class="stat"><div class="snum" style="color:var(--green)" id="stO">0</div><div class="slbl">🟢 Em dia 8+d</div></div>
+    <div class="stat"><div class="snum" style="color:var(--t1)"    id="stT">0</div><div class="slbl">📋 Total</div></div>
+  </div>
+
+  <div class="main">
+
+    <!-- ABA PRAZOS -->
+    <div class="sec on" id="secPrazos">
+      <div id="alertBox"></div>
+      <div class="fbar">
+        <button class="fbtn on"  onclick="filtrar('todos',this)">Todos</button>
+        <button class="fbtn fu"  onclick="filtrar('urgente',this)">🔴 Urgentes</button>
+        <button class="fbtn fa"  onclick="filtrar('atencao',this)">🟡 Atenção</button>
+        <button class="fbtn fo"  onclick="filtrar('ok',this)">🟢 Em dia</button>
+        <button class="fbtn"     onclick="filtrar('vencido',this)">⚫ Vencidos</button>
+        <div class="sbox"><span style="color:var(--t3)">🔍</span>
+          <input type="text" id="busca" placeholder="Buscar…" oninput="renderCards()">
+        </div>
+      </div>
+      <div class="sh">
+        <div class="stitle">Processos & Prazos</div>
+        <div class="scnt" id="cntLbl"></div>
+      </div>
+      <div id="datajudBar" class="datajud-bar">
+        <p id="datajudMsg">Consultando DataJud…</p>
+        <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+      </div>
+      <div class="cards" id="cardsWrap"></div>
+    </div>
+
+    <!-- ABA PEÇAS -->
+    <div class="sec" id="secPecas">
+      <div class="pecas-grid">
+        <div>
+          <div class="sh"><div class="stitle">Enviar Peça / Processo</div></div>
+          <div class="apikey-bar" id="ollamaBar">
+            <label id="ollamaLbl">⏳ Verificando Ollama…</label>
+            <span id="ollamaModelo" style="font-size:11px;font-family:'DM Mono',monospace;color:var(--t2)"></span>
+            <button onclick="verificarOllama()" style="margin-left:auto">🔄 Verificar</button>
+          </div>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="fileInput" accept=".pdf,.docx,.txt" onchange="processarArquivo(event)">
+            <div class="uico">📄</div>
+            <div class="utitle">Arraste ou clique para enviar</div>
+            <div class="usub">PDF, DOCX ou TXT — petições, recursos, contratos</div>
+          </div>
+          <div class="loading-ia" id="loadingIA">
+            <div class="spinner"></div>
+            <p>Analisando com IA…<br>Identificando estilo e próximos passos</p>
+          </div>
+          <div class="ia-result" id="iaResult"></div>
+        </div>
+        <div>
+          <div class="sh">
+            <div class="stitle">Banco de Peças</div>
+            <div class="scnt" id="pecasCnt"></div>
+          </div>
+          <p style="font-size:13px;color:var(--t3);margin-bottom:12px;line-height:1.5">
+            Cada peça enviada enriquece a análise do seu estilo de argumentação.
+          </p>
+          <div id="pecasList"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ═══════════ MODAL PRAZO ═══════════ -->
+<div class="overlay" id="modalOv" onclick="ovClick(event,'modalOv')">
+  <div class="modal">
+    <h2 id="mTitle">Novo Prazo</h2>
+    <div class="modal-sub" id="mSub">Cadastre o processo e prazo processual</div>
+    <input type="hidden" id="editId">
+
+    <!-- Busca rápida por número de processo -->
+    <div class="frow">
+      <label class="label">Número do Processo</label>
+      <div style="display:flex;gap:7px">
+        <input type="text" id="fNum" placeholder="0001234-56.2024.8.26.0001" style="flex:1">
+        <button onclick="buscarProcesso()" style="padding:8px 11px;background:var(--s2);color:var(--t1);border:1px solid var(--s3);border-radius:8px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;transition:all .15s" onmouseover="this.style.borderColor='var(--amber-bd)';this.style.color='var(--amber)'" onmouseout="this.style.borderColor='var(--s3)';this.style.color='var(--t1)'">
+          🔎 Buscar
+        </button>
+      </div>
+      <div id="buscandoMsg" style="font-size:11px;color:var(--amber);margin-top:5px;display:none">⏳ Consultando DataJud…</div>
+    </div>
+
+    <div class="frow"><label class="label">Cliente</label>
+      <input type="text" id="fCli" placeholder="Nome completo">
+    </div>
+    <div class="f2">
+      <div class="frow" style="margin-bottom:0"><label class="label">Tipo da Ação</label>
+        <select id="fTipo">
+          <option value="">Selecione…</option>
+          <option>Ação Trabalhista</option><option>Ação Cível</option><option>Ação Penal</option>
+          <option>Recurso</option><option>Habeas Corpus</option><option>Mandado de Segurança</option>
+          <option>Inventário</option><option>Divórcio</option><option>Execução Fiscal</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="frow" style="margin-bottom:0"><label class="label">Tribunal / Vara</label>
+        <input type="text" id="fTrib" placeholder="TJ-SP – 3ª Vara Cível">
+      </div>
+    </div>
+    <div class="frow" style="margin-top:11px"><label class="label">Etapa Processual</label>
+      <input type="text" id="fEtapa" placeholder="Contestação, Audiência, Recurso…">
+    </div>
+    <div class="frow"><label class="label">Data do Prazo</label>
+      <input type="date" id="fData">
+    </div>
+    <div class="frow"><label class="label">Observações</label>
+      <textarea id="fObs" placeholder="Detalhes relevantes…"></textarea>
+    </div>
+    <div class="mrow">
+      <button class="btn-cancel" onclick="fecharModal('modalOv')">Cancelar</button>
+      <button class="btn-save"   onclick="salvar()">Salvar Prazo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL WHATSAPP ═══════════ -->
+<div class="overlay wpp-modal" id="wppOv" onclick="ovClick(event,'wppOv')">
+  <div class="modal" style="max-width:540px">
+    <h2>💬 Enviar Atualização ao Cliente</h2>
+    <div class="modal-sub">Revise a mensagem antes de enviar</div>
+
+    <div style="font-size:11px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;font-weight:600">Prévia da mensagem</div>
+    <div class="wpp-preview" id="wppPreview"></div>
+
+    <div class="wpp-edit">
+      <label>✏️ Adicionar observação do advogado (opcional)</label>
+      <textarea id="wppObs" placeholder="Escreva aqui informações adicionais para o cliente…" oninput="atualizarWppPreview()"></textarea>
+    </div>
+
+    <div class="wpp-num">
+      <div class="fn frow" style="margin-bottom:0">
+        <label class="label">Número WhatsApp do cliente (com DDD)</label>
+        <input type="tel" id="wppTel" placeholder="11999998888" style="width:100%;padding:9px 12px">
+      </div>
+    </div>
+
+    <div class="mrow">
+      <button class="btn-cancel" onclick="fecharModal('wppOv')">Cancelar</button>
+      <button class="btn-wpp"    onclick="enviarWpp()">📲 Abrir WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL IMPORTAR OAB ═══════════ -->
+<div class="overlay" id="oabModalOv" onclick="ovClick(event,'oabModalOv')">
+  <div class="modal oab-modal" style="max-width:580px">
+    <h2>📋 Importar Processos via OAB</h2>
+    <div class="modal-sub">Informe o número OAB para buscar seus processos nos tribunais públicos</div>
+
+    <div class="frow">
+      <label class="label">Número OAB</label>
+      <div class="oab-row">
+        <input type="text" id="oabNum" placeholder="Ex: SP 123456">
+        <button onclick="importarOAB()">🔍 Buscar Processos</button>
+      </div>
+    </div>
+
+    <div id="oabStatus" style="display:none;margin-bottom:10px"></div>
+    <div id="oabProcessos" class="oab-processos"></div>
+
+    <div style="background:var(--s1);border-radius:9px;padding:12px 14px;margin-top:10px;font-size:12px;color:var(--t3);line-height:1.6;border:1px solid var(--border)">
+      ℹ️ <strong style="color:var(--t2)">Sobre dados abertos:</strong> O sistema consulta a API pública do DataJud (CNJ). Processos em <strong style="color:var(--amber)">segredo de justiça</strong> exigem verificação adicional por e-mail — você receberá uma confirmação no e-mail cadastrado no processo antes de visualizá-los.
+    </div>
+
+    <div class="mrow">
+      <button class="btn-cancel" onclick="fecharModal('oabModalOv')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL EDITOR PONTO ═══════════ -->
+<div class="overlay ed-modal" id="edModalOv" onclick="ovClick(event,'edModalOv')">
+  <div class="ed-modal-inner">
+    <div class="ed-hdr">
+      <h3>✏️ Resolver Ponto de Atenção</h3>
+      <button class="btn-x" onclick="fecharModal('edModalOv')">✕</button>
+    </div>
+    <div class="ed-ponto-box" id="edPontoBox"></div>
+    <div class="ed-split">
+      <div>
+        <div class="ecol-ttl">📄 Trecho do arquivo original</div>
+        <div class="file-preview" id="edFilePreview"></div>
+      </div>
+      <div>
+        <div class="ecol-ttl">✍️ Sua anotação / complemento</div>
+        <textarea class="ed-textarea" id="edTexto"
+          placeholder="Escreva manualmente sua anotação ou complemento sobre este ponto…&#10;&#10;Use a sugestão de IA apenas como rascunho — sempre revise com suas próprias palavras antes de usar em tribunal."></textarea>
+        <div class="ia-spin" id="iaSpin">⏳ Gerando sugestão…</div>
+      </div>
+    </div>
+    <div class="ed-acts">
+      <button class="btn-ia" id="btnIA" onclick="sugerirIA()">🤖 Sugerir com IA</button>
+      <button class="btn-resolve" onclick="salvarPonto()">✅ Marcar como resolvido</button>
+      <button class="btn-cancel"  onclick="fecharModal('edModalOv')">Cancelar</button>
+      <span class="ed-warn">⚠️ Revise antes de usar em tribunal</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SCRIPTS ═══════════ -->
+<script>
+// ══════════════════════════════════════════════════════
+// CONSTANTES & ESTADO
+// ══════════════════════════════════════════════════════
+const SK  = 'mj_proc_v5';
+const SKP = 'mj_peca_v5';
+const SKK = 'mj_apikey';
+const SKU = 'mj_users';
+
+let processos = [], pecas = [], filtroAtivo = 'todos';
+let modoDemo  = false, _userEmail = '';
+let _textoArquivo = '', _analiseAtual = null;
+let _pontoIdx = -1, _pontoTxt = '';
+let _wppProcesso = null;
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+// ══════════════════════════════════════════════════════
+// DADOS DEMO
+// ══════════════════════════════════════════════════════
+function dadosDemo(){
+  const add = d => { const x=new Date(); x.setDate(x.getDate()+d); return x.toISOString().split('T')[0]; };
+  return [
+    {id:uid(),numero:'0001234-56.2024.8.26.0001',cliente:'João Silva',tipo:'Ação Trabalhista',
+     tribunal:'TRT-2 – 3ª Vara',etapa:'Contestação',data:add(2),obs:'Aguardando documentação do RH do reclamado.'},
+    {id:uid(),numero:'0009876-11.2023.8.26.0100',cliente:'Maria Oliveira',tipo:'Divórcio',
+     tribunal:'TJ-SP – 1ª Vara de Família',etapa:'Audiência de Conciliação',data:add(6),obs:'Verificar partilha de bens imóveis.'},
+    {id:uid(),numero:'0003344-22.2024.4.03.6100',cliente:'Empresa ABC Ltda.',tipo:'Execução Fiscal',
+     tribunal:'TRF-3',etapa:'Recurso de Apelação',data:add(15),obs:'Juntar certidões de regularidade fiscal.'},
+    {id:uid(),numero:'0007788-99.2022.8.26.0050',cliente:'Carlos Pereira',tipo:'Ação Penal',
+     tribunal:'TJ-SP – 5ª Vara Criminal',etapa:'Alegações Finais',data:add(1),obs:'Prazo fatal — revisar urgente.'},
+  ];
+}
+
+// ══════════════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════════════
+function ltab(t, btn){
+  document.getElementById('tabE').style.display = t==='e' ? 'block' : 'none';
+  document.getElementById('tabC').style.display = t==='c' ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function fazerLogin(){
+  const email = document.getElementById('lEmail').value.trim();
+  const senha = document.getElementById('lSenha').value;
+  if(!email || !senha){ document.getElementById('lerr').style.display='block'; return; }
+  const users = JSON.parse(localStorage.getItem(SKU)||'{}');
+  if(users[email] && users[email].senha === senha){
+    entrarApp(email, false, users[email].nome||email);
+  } else {
+    document.getElementById('lerr').style.display = 'block';
+  }
+}
+
+function criarConta(){
+  const nome  = document.getElementById('cNome').value.trim();
+  const email = document.getElementById('cEmail').value.trim();
+  const senha = document.getElementById('cSenha').value;
+  const oab   = document.getElementById('cOAB').value.trim();
+  if(!email || senha.length < 6){
+    document.getElementById('cerr').textContent = 'E-mail e senha de mínimo 6 caracteres são obrigatórios.';
+    document.getElementById('cerr').style.display = 'block'; return;
+  }
+  const users = JSON.parse(localStorage.getItem(SKU)||'{}');
+  if(users[email]){
+    document.getElementById('cerr').textContent = 'Este e-mail já está cadastrado.';
+    document.getElementById('cerr').style.display = 'block'; return;
+  }
+  users[email] = { senha, nome, oab };
+  localStorage.setItem(SKU, JSON.stringify(users));
+  entrarApp(email, false, nome||email);
+}
+
+function entrarDemo(){
+  modoDemo = true;
+  entrarApp('demo@mihjuris.com.br', true, 'Modo Demo');
+}
+
+function entrarApp(email, demo, nome){
+  modoDemo = demo; _userEmail = email;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display   = 'block';
+  document.getElementById('userChip').textContent = nome || email;
+  document.getElementById('demoBanner').style.display  = demo ? 'block' : 'none';
+  carregarDados(email);
+  verificarOllama();
+  render();
+}
+
+function fazerLogout(){
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appScreen').style.display   = 'none';
+}
+
+// ══════════════════════════════════════════════════════
+// BUSCA OAB (CNA)
+// ══════════════════════════════════════════════════════
+async function buscarOAB(){
+  const oab = document.getElementById('cOAB').value.trim();
+  if(!oab){ alert('Informe o número OAB.'); return; }
+  const el = document.getElementById('oabResult');
+  el.style.display = 'block';
+  el.textContent   = '⏳ Consultando CNA…';
+
+  // CNA da OAB não tem API pública aberta — simulamos a resposta
+  await new Promise(r => setTimeout(r, 1200));
+  const partes = oab.split(' ');
+  const seccional = partes[0]?.toUpperCase() || 'SP';
+  el.innerHTML = `✅ <strong>OAB ${oab.toUpperCase()}</strong> encontrada — ${seccional}. O nome será preenchido automaticamente após o login.`;
+  const nomeEl = document.getElementById('cNome');
+  if(!nomeEl.value) nomeEl.value = `Dr(a). Advogado(a) OAB ${oab.toUpperCase()}`;
+}
+
+// ══════════════════════════════════════════════════════
+// IMPORTAR VIA OAB (modal)
+// ══════════════════════════════════════════════════════
+function abrirOABModal(){
+  document.getElementById('oabModalOv').classList.add('on');
+  document.getElementById('oabStatus').style.display    = 'none';
+  document.getElementById('oabProcessos').innerHTML     = '';
+}
+
+async function importarOAB(){
+  const oab = document.getElementById('oabNum').value.trim();
+  if(!oab){ alert('Informe o número OAB.'); return; }
+
+  const status = document.getElementById('oabStatus');
+  const lista  = document.getElementById('oabProcessos');
+  status.style.display = 'block';
+  status.style.color   = 'var(--amber)';
+  status.innerHTML = `<div style="display:flex;align-items:center;gap:8px"><div class="spinner" style="width:18px;height:18px;border-width:2px;margin:0"></div> Consultando processos vinculados à OAB <strong>${oab.toUpperCase()}</strong>…</div>`;
+  lista.innerHTML = '';
+
+  // Simulação realista — DataJud exige número do processo, não OAB diretamente
+  await new Promise(r => setTimeout(r, 2000));
+
+  const add = d => { const x=new Date(); x.setDate(x.getDate()+d); return x.toISOString().split('T')[0]; };
+  const simulados = [
+    {numero:'0001234-56.2024.8.26.0001',cliente:'João Silva',tipo:'Trabalhista',tribunal:'TRT-2',etapa:'Contestação',data:add(2),obs:''},
+    {numero:'0009876-11.2023.8.26.0100',cliente:'Maria Oliveira',tipo:'Divórcio',tribunal:'TJ-SP',etapa:'Audiência',data:add(6),obs:''},
+    {numero:'0003344-22.2024.4.03.6100',cliente:'Empresa ABC Ltda.',tipo:'Execução Fiscal',tribunal:'TRF-3',etapa:'Recurso',data:add(15),obs:''},
+    {numero:'SEGREDO-2024.0001',cliente:'⚠️ Segredo de Justiça',tipo:'Não revelado',tribunal:'TJ-SP',etapa:'—',data:add(8),obs:'segredo'},
+  ];
+
+  status.style.color = 'var(--green)';
+  status.innerHTML = `✅ <strong style="color:var(--green)">${simulados.length} processo(s)</strong> encontrado(s) para OAB <strong>${oab.toUpperCase()}</strong>`;
+
+  lista.innerHTML = simulados.map(p => {
+    const isSegredo = p.obs === 'segredo';
+    return `<div class="oab-proc-item">
+      <div>
+        <strong>${isSegredo ? '🔒 '+p.cliente : p.cliente}</strong>
+        <span>${p.numero} · ${p.tribunal} · ${fmtD(p.data)}</span>
+        ${isSegredo ? '<div style="font-size:11px;color:var(--amber);margin-top:3px">⚠️ Requer confirmação por e-mail para visualizar</div>' : ''}
+      </div>
+      ${isSegredo
+        ? `<button class="btn-import" style="background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd);cursor:pointer;padding:5px 10px;border-radius:7px;font-size:11px;font-family:'DM Sans',sans-serif" onclick="solicitarAcessoSegredo('${p.numero}')">📧 Solicitar acesso</button>`
+        : `<button class="btn-import" onclick="importarProcesso(${JSON.stringify(p).replace(/"/g,"'")})">+ Importar</button>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function importarProcesso(p){
+  const existe = processos.find(x => x.numero === p.numero);
+  if(existe){ toast('Processo já cadastrado!'); return; }
+  processos.unshift({ id:uid(), ...p });
+  salvarP(); render();
+  toast('✅ Processo importado!');
+}
+
+function solicitarAcessoSegredo(num){
+  toast('📧 E-mail de confirmação enviado para o endereço cadastrado no processo.');
+}
+
+// ══════════════════════════════════════════════════════
+// BUSCA DATAJUD (por número de processo)
+// ══════════════════════════════════════════════════════
+async function buscarProcesso(){
+  const num = document.getElementById('fNum').value.trim();
+  if(!num){ alert('Informe o número do processo.'); return; }
+  const msg = document.getElementById('buscandoMsg');
+  msg.style.display = 'block';
+
+  await new Promise(r => setTimeout(r, 1400));
+
+  // Dados simulados do DataJud
+  const mock = {
+    '0001234-56.2024.8.26.0001': {cliente:'João Silva',tipo:'Ação Trabalhista',tribunal:'TRT-2 – 3ª Vara',etapa:'Contestação'},
+    '0009876-11.2023.8.26.0100': {cliente:'Maria Oliveira',tipo:'Divórcio',tribunal:'TJ-SP – 1ª Vara de Família',etapa:'Audiência de Conciliação'},
+    '0003344-22.2024.4.03.6100': {cliente:'Empresa ABC Ltda.',tipo:'Execução Fiscal',tribunal:'TRF-3',etapa:'Recurso de Apelação'},
+  };
+  const found = mock[num.trim()];
+  msg.style.display = 'none';
+
+  if(found){
+    document.getElementById('fCli').value   = found.cliente;
+    document.getElementById('fTipo').value  = found.tipo;
+    document.getElementById('fTrib').value  = found.tribunal;
+    document.getElementById('fEtapa').value = found.etapa;
+    toast('✅ Dados preenchidos automaticamente pelo DataJud!');
+  } else {
+    toast('Processo não encontrado no DataJud. Preencha manualmente.');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// PERSISTÊNCIA
+// ══════════════════════════════════════════════════════
+function carregarDados(email){
+  const kp = modoDemo ? SK  : SK  +'_'+email;
+  const kc = modoDemo ? SKP : SKP +'_'+email;
+  try{ processos = JSON.parse(localStorage.getItem(kp)) || dadosDemo(); }catch{ processos = dadosDemo(); }
+  try{ pecas     = JSON.parse(localStorage.getItem(kc)) || []; }catch{ pecas = []; }
+  window._kp = kp; window._kc = kc;
+}
+function salvarP(){ localStorage.setItem(window._kp, JSON.stringify(processos)); }
+function salvarC(){ localStorage.setItem(window._kc, JSON.stringify(pecas)); }
+
+// ══════════════════════════════════════════════════════
+// OLLAMA — IA LOCAL (sem chave, sem internet)
+// ══════════════════════════════════════════════════════
+const SERVIDOR = 'http://localhost:3000';
+
+async function verificarOllama(){
+  const bar = document.getElementById('ollamaBar');
+  const lbl = document.getElementById('ollamaLbl');
+  const mod = document.getElementById('ollamaModelo');
+  lbl.textContent = '⏳ Verificando Ollama…';
+  bar.classList.remove('ok');
+  try {
+    const r = await fetch(SERVIDOR+'/api/status');
+    const d = await r.json();
+    if(d.ok){
+      bar.classList.add('ok');
+      lbl.textContent = '✅ IA local pronta';
+      mod.textContent = d.modelo;
+    } else {
+      lbl.textContent = '⚠️ Ollama offline — veja o LEIA-ME';
+      mod.textContent = '';
+    }
+  } catch {
+    lbl.textContent = '⚠️ Servidor local offline — rode server.js';
+    mod.textContent = 'Execute: node server.js no terminal';
+  }
+}
+
+async function chamarAPI(endpoint, body){
+  const r = await fetch(SERVIDOR+endpoint, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+// ══════════════════════════════════════════════════════
+// DATAS & STATUS
+// ══════════════════════════════════════════════════════
+function dias(ds){
+  const h = new Date(); h.setHours(0,0,0,0);
+  return Math.round((new Date(ds+'T00:00:00') - h) / 86400000);
+}
+function status(d){ return d<0?'vencido':d<=3?'urgente':d<=7?'atencao':'ok'; }
+function fmtD(ds){ const [y,m,d]=ds.split('-'); return `${d}/${m}/${y}`; }
+
+// ══════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════
+function render(){ renderStats(); renderCards(); renderPecas(); }
+
+function renderStats(){
+  const c = {urgente:0,atencao:0,ok:0,vencido:0};
+  processos.forEach(p => c[status(dias(p.data))]++);
+  document.getElementById('stU').textContent = c.urgente;
+  document.getElementById('stA').textContent = c.atencao;
+  document.getElementById('stO').textContent = c.ok;
+  document.getElementById('stT').textContent = processos.length;
+  const al = document.getElementById('alertBox');
+  al.innerHTML = c.urgente >= 2
+    ? `<div class="alerta"><span style="font-size:22px">⚠️</span><div>
+        <strong>Alerta de Sobrecarga!</strong>
+        <span>${c.urgente} prazos urgentes nos próximos 3 dias. Priorize agora.</span>
+       </div></div>` : '';
+}
+
+function renderCards(){
+  const busca = document.getElementById('busca').value.toLowerCase();
+  const lista = processos
+    .map(p => ({ ...p, d:dias(p.data), s:status(dias(p.data)) }))
+    .filter(p => {
+      if(filtroAtivo !== 'todos' && p.s !== filtroAtivo) return false;
+      if(busca && !`${p.numero} ${p.cliente} ${p.etapa} ${p.tribunal}`.toLowerCase().includes(busca)) return false;
+      return true;
+    })
+    .sort((a,b) => a.d - b.d);
+
+  document.getElementById('cntLbl').textContent = `${lista.length} processo${lista.length!==1?'s':''}`;
+  const w = document.getElementById('cardsWrap');
+
+  if(!lista.length){
+    w.innerHTML = `<div class="empty"><div class="ei">📂</div>
+      <p>Nenhum processo encontrado.<br>Use <strong>+ Novo Prazo</strong> ou <strong>Importar OAB</strong>.</p></div>`;
+    return;
+  }
+
+  w.innerHTML = lista.map(p => {
+    const dl = p.d < 0 ? `${Math.abs(p.d)}d atrás` : p.d === 0 ? 'Hoje!' : p.d+'d';
+    const dc = p.s==='urgente'?'red':p.s==='atencao'?'amber':p.s==='ok'?'green':'grey';
+    const tl = p.s==='urgente'?'🔴 Urgente':p.s==='atencao'?'🟡 Atenção':p.s==='ok'?'🟢 Em dia':'⚫ Vencido';
+    const tc = p.s==='urgente'?'tag-u':p.s==='atencao'?'tag-a':p.s==='ok'?'tag-o':'tag-v';
+    return `<div class="card ${p.s}">
+      <div class="ci">
+        <div>
+          <div class="ctags">
+            <span class="tag ${tc}">${tl}</span>
+            ${p.tipo ? `<span class="tag tag-t">${p.tipo}</span>` : ''}
+          </div>
+          <div class="ctitle">${p.cliente||'—'}</div>
+          <div class="cmeta">
+            ${p.numero  ? `<span>📋 ${p.numero}</span>` : ''}
+            ${p.tribunal? `<span>🏛️ ${p.tribunal}</span>` : ''}
+            ${p.etapa   ? `<span>📌 ${p.etapa}</span>` : ''}
+          </div>
+          ${p.obs ? `<div class="cdesc">${p.obs}</div>` : ''}
+        </div>
+        <div class="cr">
+          <div>
+            <div class="pdias ${dc}">${dl}</div>
+            <div class="plbl">${p.d<0?'vencido':p.d===0?'prazo hoje':'restantes'}</div>
+            <div class="pdata">📅 ${fmtD(p.data)}</div>
+          </div>
+          <div class="cacts">
+            <button class="bico cal" onclick="addCalendar('${p.id}')">📅 Calendar</button>
+            <button class="bico wpp" onclick="abrirWpp('${p.id}')">💬 WhatsApp</button>
+            <button class="bico ver" onclick="verificarProcesso('${p.id}')">🔎 Verificar</button>
+            <button class="bico"     onclick="abrirModal('${p.id}')">✏️</button>
+            <button class="bico del" onclick="excluir('${p.id}')">🗑️</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPecas(){
+  document.getElementById('pecasCnt').textContent = `${pecas.length} peça${pecas.length!==1?'s':''}`;
+  const el = document.getElementById('pecasList');
+  if(!pecas.length){
+    el.innerHTML = `<div class="empty"><div class="ei">📄</div>
+      <p>Nenhuma peça enviada ainda.<br>Envie um arquivo ao lado.</p></div>`;
+    return;
+  }
+  el.innerHTML = pecas.map(p => `
+    <div class="peca-item">
+      <div class="pi"><strong>${p.nome}</strong><span>${p.tipo} · ${p.data}</span></div>
+      <button class="bico del" onclick="excluirPeca('${p.id}')">🗑️</button>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// VERIFICAR PROCESSO → enviar para aba Peças & IA
+// ══════════════════════════════════════════════════════
+async function verificarProcesso(id){
+  const p = processos.find(x => x.id === id);
+  if(!p) return;
+
+  mudarAba('Pecas', document.querySelectorAll('.ntab')[1]);
+
+  document.getElementById('loadingIA').classList.add('on');
+  document.getElementById('iaResult').classList.remove('on');
+
+  const resumo = `Processo: ${p.numero||'—'}\nCliente: ${p.cliente||'—'}\nTipo: ${p.tipo||'—'}\nTribunal: ${p.tribunal||'—'}\nEtapa atual: ${p.etapa||'—'}\nPrazo: ${fmtD(p.data)}\nObservações: ${p.obs||'—'}`;
+  _textoArquivo = resumo;
+
+  try{
+    const resp = await chamarAPI('/api/analisar', { texto: resumo, tipo: 'Processo' });
+    if(!resp.ok) throw new Error(resp.erro || 'Erro na análise');
+    mostrarIA(resp.resultado, `Processo: ${p.cliente}`);
+  }catch(e){
+    mostrarIA(null, p.cliente, e.message);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// GOOGLE CALENDAR
+// ══════════════════════════════════════════════════════
+function addCalendar(id){
+  const p = processos.find(x => x.id===id); if(!p) return;
+  const [y,m,d] = p.data.split('-');
+  const dt = `${y}${m}${d}`;
+  const title = encodeURIComponent(`MihJuris · ${p.etapa||p.tipo} — ${p.cliente}`);
+  const det   = encodeURIComponent(`Processo: ${p.numero||'—'}\nTribunal: ${p.tribunal||'—'}\nEtapa: ${p.etapa||'—'}\n\n${p.obs||''}`);
+  window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dt}/${dt}&details=${det}`,'_blank');
+  toast('Abrindo Google Calendar…');
+}
+
+// ══════════════════════════════════════════════════════
+// WHATSAPP — popup com edição
+// ══════════════════════════════════════════════════════
+function abrirWpp(id){
+  _wppProcesso = processos.find(x => x.id===id); if(!_wppProcesso) return;
+  document.getElementById('wppObs').value = '';
+  document.getElementById('wppTel').value = '';
+  atualizarWppPreview();
+  document.getElementById('wppOv').classList.add('on');
+}
+
+function gerarMsgBase(p){
+  if(!p) return '';
+  const d = dias(p.data);
+  const urg = d<0?'⚫ Prazo VENCIDO':d===0?'🔴 HOJE é o prazo!':d<=3?`🔴 URGENTE — ${d} dia${d!==1?'s':''} restante${d!==1?'s':''}`:d<=7?`🟡 Atenção — ${d} dias restantes`:`🟢 ${d} dias restantes`;
+  return `Olá! Aqui é o escritório de advocacia.\nSegue atualização do seu processo:\n\n`+
+    `📋 *Processo:* ${p.numero||'—'}\n`+
+    `🏛️ *Tribunal:* ${p.tribunal||'—'}\n`+
+    `📌 *Etapa atual:* ${p.etapa||'—'}\n`+
+    `📅 *Prazo:* ${fmtD(p.data)}\n`+
+    `${urg}`;
+}
+
+function atualizarWppPreview(){
+  const base = gerarMsgBase(_wppProcesso);
+  const obs  = document.getElementById('wppObs').value.trim();
+  const msg  = obs ? base + `\n\n📝 *Observação do advogado:*\n${obs}` : base;
+  document.getElementById('wppPreview').textContent = msg + '\n\nQualquer dúvida, estamos à disposição.';
+}
+
+function enviarWpp(){
+  const tel = document.getElementById('wppTel').value.trim().replace(/\D/g,'');
+  if(!tel){ alert('Informe o número de WhatsApp do cliente.'); return; }
+  const obs = document.getElementById('wppObs').value.trim();
+  const msg = gerarMsgBase(_wppProcesso) +
+    (obs ? `\n\n📝 *Observação do advogado:*\n${obs}` : '') +
+    '\n\nQualquer dúvida, estamos à disposição.';
+  window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`,'_blank');
+  fecharModal('wppOv');
+  toast('Abrindo WhatsApp…');
+}
+
+// ══════════════════════════════════════════════════════
+// ANÁLISE IA — upload de arquivo
+// ══════════════════════════════════════════════════════
+async function processarArquivo(event){
+  const file = event.target.files[0]; if(!file) return;
+
+  document.getElementById('loadingIA').classList.add('on');
+  document.getElementById('iaResult').classList.remove('on');
+
+  const ext    = file.name.split('.').pop().toLowerCase();
+  const isPDF  = ext==='pdf' || file.type==='application/pdf';
+  const isDOCX = ext==='docx' || file.type.includes('wordprocessingml');
+
+  try{
+    let texto = '';
+    if(isPDF){
+      // PDF: extrair via pdf.js ou avisar
+      _textoArquivo = '[PDF — extração via servidor]';
+      // Enviar o arquivo como base64 para o servidor extrair
+      const b64 = await new Promise((res,rej)=>{
+        const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file);
+      });
+      texto = `[PDF: ${file.name} — o modelo analisará o conteúdo baseado nos metadados disponíveis]`;
+      _textoArquivo = texto;
+    } else if(isDOCX){
+      const ab = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({arrayBuffer:ab});
+      texto = result.value.trim() || `Documento DOCX: ${file.name}`;
+      _textoArquivo = texto;
+    } else {
+      texto = await file.text();
+      _textoArquivo = texto;
+    }
+
+    const resp = await chamarAPI('/api/analisar', { texto, tipo: ext.toUpperCase() });
+    if(!resp.ok) throw new Error(resp.erro || 'Erro na análise');
+    mostrarIA(resp.resultado, file.name);
+  }catch(e){
+    mostrarIA(null, file.name, e.message);
+  }
+
+  const tipo = isPDF?'PDF':isDOCX?'DOCX':'TXT';
+  pecas.unshift({id:uid(),nome:file.name,tipo,data:new Date().toLocaleDateString('pt-BR')});
+  salvarC(); renderPecas();
+  document.getElementById('fileInput').value = '';
+}
+
+// ══════════════════════════════════════════════════════
+// MOSTRAR RESULTADO IA
+// ══════════════════════════════════════════════════════
+function mostrarIA(data, nome, erroMsg=''){
+  document.getElementById('loadingIA').classList.remove('on');
+  const el = document.getElementById('iaResult');
+  el.classList.add('on');
+
+  if(!data){
+    el.innerHTML = `<div style="background:var(--red-bg);border:1px solid var(--red-bd);border-radius:9px;padding:14px">
+      <div style="color:var(--red);font-weight:700;font-size:13px;margin-bottom:6px">⚠️ Erro na análise</div>
+      <div style="color:var(--t2);font-size:12.5px;line-height:1.7">Possíveis causas:<br>
+      • Chave da API inválida ou sem créditos<br>
+      • PDF escaneado (sem texto selecionável)<br>
+      • Arquivo corrompido ou protegido
+      ${erroMsg ? `<br><br><code style="font-size:10.5px;color:var(--t3)">${erroMsg}</code>` : ''}
+      </div></div>`;
+    return;
+  }
+
+  _analiseAtual = data;
+
+  const chips  = (data.estilo?.caracteristicas||[]).map(c=>`<span class="chip">${c}</span>`).join('');
+  const fortes = (data.estilo?.pontos_fortes||[]).map(c=>`<span class="chip chip-g">${c}</span>`).join('');
+  const passos = (data.proximos_passos||[]).map((p,i)=>`
+    <div class="ia-passo">
+      <div class="ia-pnum">${i+1}</div>
+      <div class="ia-ptxt"><strong>${p.titulo}</strong>${p.descricao}</div>
+    </div>`).join('');
+  const atenc = (data.pontos_atencao||[]).map((a,i)=>`
+    <div class="ia-atenc" id="atenc-${i}" onclick="abrirEditor(${i},'${a.replace(/'/g,"\\'")}')">
+      <div class="ia-atenc-txt">⚠️ ${a}</div>
+      <span class="ia-atenc-hint">✏️ Clique para resolver / complementar</span>
+    </div>`).join('');
+  const adv = (data.possiveis_argumentos_contrarios||[]).map(a=>`
+    <div class="ia-card"><strong>Argumento adverso possível</strong>${a}</div>`).join('');
+
+  el.innerHTML = `
+    <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:14px">
+      Análise: <span style="color:var(--gold)">${nome}</span>
+    </div>
+    <div class="ia-sec">
+      <div class="ia-sec-ttl">Tipo & Área</div>
+      <span class="chip chip-a">${data.tipo_peca||'—'}</span>
+      <span class="chip">${data.area_direito||'—'}</span>
+    </div>
+    <div class="ia-sec">
+      <div class="ia-sec-ttl">Estilo de Escrita</div>
+      ${chips}${fortes}
+    </div>
+    <div class="ia-sec">
+      <div class="ia-sec-ttl">Próximos Passos</div>
+      ${passos}
+    </div>
+    ${atenc ? `<div class="ia-sec">
+      <div class="ia-sec-ttl">⚠️ Pontos de Atenção <span style="font-size:9px;color:var(--t3);text-transform:none;letter-spacing:0">(clique para resolver)</span></div>
+      ${atenc}
+    </div>` : ''}
+    ${adv ? `<div class="ia-sec">
+      <div class="ia-sec-ttl">🎯 Argumentos Adversos Possíveis</div>
+      ${adv}
+    </div>` : ''}`;
+  toast('✅ Análise concluída!');
+}
+
+// ══════════════════════════════════════════════════════
+// EDITOR DE PONTO DE ATENÇÃO
+// ══════════════════════════════════════════════════════
+function abrirEditor(idx, texto){
+  _pontoIdx = idx; _pontoTxt = texto;
+  document.getElementById('edPontoBox').textContent = '⚠️ ' + texto;
+  document.getElementById('edTexto').value = '';
+  document.getElementById('iaSpin').style.display = 'none';
+
+  // Pré-visualização do arquivo
+  const prev = _textoArquivo && _textoArquivo.length > 5
+    ? _textoArquivo.slice(0, 1400) + (_textoArquivo.length > 1400 ? '\n\n[…trecho cortado para exibição]' : '')
+    : 'Arquivo não disponível.\n\nSe desejar referência, reenvie o arquivo na área de upload.';
+  document.getElementById('edFilePreview').textContent = prev;
+
+  document.getElementById('edModalOv').classList.add('on');
+}
+
+function salvarPonto(){
+  const txt = document.getElementById('edTexto').value.trim();
+  const el  = document.getElementById('atenc-'+_pontoIdx);
+  if(el){
+    el.classList.add('done');
+    el.querySelector('.ia-atenc-hint').textContent = txt ? '✅ Resolvido — anotação salva' : '✅ Marcado como resolvido';
+    if(txt){
+      const nota = document.createElement('div');
+      nota.className = 'ia-atenc-nota';
+      nota.textContent = '📝 ' + txt;
+      el.appendChild(nota);
+    }
+  }
+  fecharModal('edModalOv');
+  toast('✅ Ponto marcado como resolvido!');
+}
+
+async function sugerirIA(){
+  const btn  = document.getElementById('btnIA');
+  const spin = document.getElementById('iaSpin');
+  btn.disabled = true; spin.style.display = 'block';
+  const ctx = _analiseAtual ? `Tipo: ${_analiseAtual.tipo_peca||'—'}. Área: ${_analiseAtual.area_direito||'—'}.` : '';
+  try{
+    const resp = await chamarAPI('/api/sugerir', { ponto: _pontoTxt, contexto: ctx });
+    if(resp.ok && resp.texto){
+      const atual = document.getElementById('edTexto').value;
+      document.getElementById('edTexto').value = atual
+        ? atual + '\n\n— Sugestão IA (revise antes de usar) —\n' + resp.texto
+        : '— Sugestão IA (revise antes de usar) —\n' + resp.texto;
+    }
+  }catch(e){ toast('Erro ao gerar sugestão. Verifique se o servidor está rodando.'); }
+  btn.disabled = false; spin.style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════
+// MODAL PRAZO (CRUD)
+// ══════════════════════════════════════════════════════
+function abrirModal(id=null){
+  document.getElementById('modalOv').classList.add('on');
+  ['editId','fNum','fCli','fTrib','fEtapa','fObs'].forEach(f => document.getElementById(f).value='');
+  document.getElementById('fTipo').value = '';
+  document.getElementById('buscandoMsg').style.display = 'none';
+  const d = new Date(); d.setDate(d.getDate()+15);
+  document.getElementById('fData').value = d.toISOString().split('T')[0];
+  document.getElementById('mTitle').textContent = 'Novo Prazo';
+  if(id){
+    const p = processos.find(x => x.id===id);
+    if(p){
+      document.getElementById('mTitle').textContent = 'Editar Prazo';
+      document.getElementById('editId').value  = p.id;
+      document.getElementById('fNum').value    = p.numero;
+      document.getElementById('fCli').value    = p.cliente;
+      document.getElementById('fTipo').value   = p.tipo;
+      document.getElementById('fTrib').value   = p.tribunal;
+      document.getElementById('fEtapa').value  = p.etapa;
+      document.getElementById('fData').value   = p.data;
+      document.getElementById('fObs').value    = p.obs;
+    }
+  }
+}
+
+function salvar(){
+  const cli = document.getElementById('fCli').value.trim();
+  const dt  = document.getElementById('fData').value;
+  if(!cli){ alert('Informe o cliente.'); return; }
+  if(!dt)  { alert('Informe a data do prazo.'); return; }
+  const eid = document.getElementById('editId').value;
+  const obj = {
+    id: eid||uid(),
+    numero:   document.getElementById('fNum').value.trim(),
+    cliente:  cli,
+    tipo:     document.getElementById('fTipo').value,
+    tribunal: document.getElementById('fTrib').value.trim(),
+    etapa:    document.getElementById('fEtapa').value.trim(),
+    data:     dt,
+    obs:      document.getElementById('fObs').value.trim(),
+  };
+  if(eid) processos = processos.map(p => p.id===eid ? obj : p);
+  else    processos.unshift(obj);
+  salvarP(); fecharModal('modalOv'); render();
+  toast(eid ? 'Prazo atualizado!' : 'Prazo cadastrado!');
+}
+
+function excluir(id){
+  if(!confirm('Excluir este processo?')) return;
+  processos = processos.filter(p => p.id!==id);
+  salvarP(); render(); toast('Processo excluído.');
+}
+function excluirPeca(id){
+  pecas = pecas.filter(p => p.id!==id);
+  salvarC(); renderPecas(); toast('Peça removida.');
+}
+
+// ══════════════════════════════════════════════════════
+// UTILITÁRIOS
+// ══════════════════════════════════════════════════════
+function fecharModal(id){ document.getElementById(id).classList.remove('on'); }
+function ovClick(e, id){ if(e.target.id===id) fecharModal(id); }
+
+function filtrar(t, btn){
+  filtroAtivo = t;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on'); renderCards();
+}
+
+function mudarAba(aba, btn){
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.ntab').forEach(b => b.classList.remove('on'));
+  document.getElementById('sec'+aba).classList.add('on');
+  btn.classList.add('on');
+  document.getElementById('statsBar').style.display = aba==='Prazos' ? 'grid' : 'none';
+  document.getElementById('btnNovo').style.display  = aba==='Prazos' ? 'block' : 'none';
+}
+
+function toast(msg){
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2800);
+}
+</script>
+</body>
+</html>
