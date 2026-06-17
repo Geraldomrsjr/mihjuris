@@ -6,6 +6,7 @@
 <title>MihJuris · Sistema Jurídico (Local)</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════════════
    DESIGN SYSTEM — Dark Mode Jurídico
@@ -553,6 +554,86 @@ select option { background: var(--s1); color: var(--t1); }
   .ci    { grid-template-columns:1fr; }
   .topbar,.main,.nav { padding-left:12px; padding-right:12px; }
 }
+
+/* ════════ ABA CONTRATOS ════════ */
+.contratos-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media(max-width:700px){ .contratos-grid{ grid-template-columns:1fr; } }
+
+.papel-selector { background:var(--s1); border-radius:9px; padding:12px 14px; margin-bottom:14px; border:1px solid var(--s3); }
+.papel-label { font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; display:block; }
+.papel-opts { display:flex; gap:6px; flex-wrap:wrap; }
+.papel-btn { padding:6px 12px; font-size:12px; border-radius:7px; border:1px solid var(--s3); background:var(--s2); color:var(--t2); cursor:pointer; font-family:'DM Sans',sans-serif; font-weight:500; transition:all .15s; white-space:nowrap; }
+.papel-btn:hover { border-color:var(--gold-bd); color:var(--gold); }
+.papel-btn.on { background:var(--gold); color:#1a1200; border-color:var(--gold); font-weight:700; }
+
+.contrato-resultado { display:none; }
+.contrato-resultado.on { display:block; animation:fadeUp .3s ease; }
+
+.contrato-header { background:var(--s1); border-radius:9px; padding:14px 16px; margin-bottom:14px; border:1px solid var(--s3); border-left:3px solid var(--gold); }
+.ch-tipo { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:var(--t1); margin-bottom:4px; }
+.ch-meta { font-size:12px; color:var(--t3); display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.ch-risco { display:inline-block; font-size:11px; font-weight:700; padding:4px 10px; border-radius:100px; text-transform:uppercase; letter-spacing:.5px; }
+.ch-risco.alto  { background:var(--red-bg);   color:var(--red);   border:1px solid var(--red-bd); }
+.ch-risco.medio { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-bd); }
+.ch-risco.baixo { background:var(--green-bg); color:var(--green); border:1px solid var(--green-bd); }
+
+.resumo-exec { background:var(--s1); border-radius:9px; padding:14px 16px; margin-bottom:14px; border:1px solid var(--s3); }
+.re-ttl { font-size:12px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; }
+.re-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.re-stat { text-align:center; padding:8px; background:var(--s2); border-radius:7px; }
+.re-num { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--t1); }
+.re-lbl { font-size:10px; color:var(--t3); margin-top:2px; }
+
+.clausulas-list { display:flex; flex-direction:column; gap:9px; margin-bottom:14px; }
+.clausula-card { background:var(--s0); border-radius:9px; border:1px solid var(--border); overflow:hidden; transition:all .18s; animation:fadeUp .25s ease; }
+.clausula-card:hover { box-shadow:var(--shadow); }
+.cc-header { padding:12px 14px; cursor:pointer; background:var(--s0); transition:background .15s; }
+.cc-header:hover { background:var(--s2); }
+.cc-sev { font-size:10px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; padding:2px 7px; border-radius:100px; display:inline-block; margin-bottom:6px; }
+.cc-sev.critico { background:var(--red-bg);   color:var(--red);   border:1px solid var(--red-bd); }
+.cc-sev.alerta  { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-bd); }
+.cc-sev.leve    { background:var(--green-bg); color:var(--green); border:1px solid var(--green-bd); }
+.cc-titulo { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:var(--t1); margin-bottom:3px; }
+.cc-subtitle { font-size:12px; color:var(--t2); line-height:1.5; }
+.cc-body { display:none; padding:14px; border-top:1px solid var(--s3); }
+.cc-body.on { display:block; }
+.cc-section { margin-bottom:12px; }
+.cc-section-ttl { font-size:11px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+.cc-problema { background:var(--s1); border-radius:7px; padding:9px 11px; font-size:12.5px; color:var(--t2); line-height:1.6; }
+.cc-lei { background:var(--s1); border-radius:7px; padding:9px 11px; font-size:12px; color:var(--t2); font-family:'DM Mono',monospace; }
+.cc-risco { background:var(--red-bg); color:var(--red); border:1px solid var(--red-bd); border-radius:7px; padding:9px 11px; font-size:12px; }
+.cc-ajuste { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-bd); border-radius:7px; padding:9px 11px; font-size:12.5px; line-height:1.6; }
+
+.checklist-box { background:var(--s1); border-radius:9px; padding:14px 16px; border:1px solid var(--s3); margin-bottom:14px; }
+.cl-ttl { font-size:12px; font-weight:700; color:var(--t1); margin-bottom:12px; }
+.cl-items { display:flex; flex-direction:column; gap:6px; }
+.cl-item { background:var(--s0); border-radius:7px; padding:9px 11px; display:flex; align-items:flex-start; gap:9px; cursor:pointer; border:1px solid var(--s3); transition:all .15s; }
+.cl-item:hover { background:var(--s2); border-color:var(--gold-bd); }
+.cl-item.done { background:var(--green-bg); border-color:var(--green-bd); }
+.cl-checkbox { width:18px; height:18px; border-radius:4px; border:1.5px solid var(--s3); background:var(--s1); display:flex; align-items:center; justify-content:center; font-size:10px; color:transparent; flex-shrink:0; transition:all .15s; }
+.cl-item:hover .cl-checkbox { border-color:var(--gold-bd); }
+.cl-item.done .cl-checkbox { background:var(--green); border-color:var(--green); color:#001a0a; }
+.cl-texto { flex:1; }
+.cl-acao { font-size:12.5px; color:var(--t1); line-height:1.5; margin-bottom:3px; }
+.cl-categoria { font-size:10px; color:var(--t3); }
+.cl-item.done .cl-acao { color:var(--green); font-weight:500; }
+
+.avisos-box { background:var(--s1); border-radius:9px; padding:14px 16px; border:1px solid var(--s3); margin-bottom:14px; }
+.av-ttl { font-size:12px; font-weight:700; color:var(--t1); margin-bottom:10px; }
+.av-items { display:flex; flex-direction:column; gap:8px; }
+.av-item { background:var(--s0); border-radius:7px; padding:10px 12px; border-left:3px solid var(--s3); font-size:12.5px; color:var(--t2); line-height:1.6; }
+.av-item-tipo { font-size:10px; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; display:block; }
+.av-item.legal { border-left-color:var(--blue); } .av-item.legal .av-item-tipo { color:var(--blue); }
+.av-item.financeiro { border-left-color:var(--red); } .av-item.financeiro .av-item-tipo { color:var(--red); }
+.av-item.processual { border-left-color:var(--amber); } .av-item.processual .av-item-tipo { color:var(--amber); }
+
+.notas-finais { background:var(--s1); border-radius:9px; padding:14px 16px; border:1px solid var(--border); font-size:13px; color:var(--t2); line-height:1.65; margin-bottom:14px; }
+
+.contrato-acts { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.btn-gerar-pdf { padding:9px 16px; background:var(--gold); color:#1a1200; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif; white-space:nowrap; transition:all .18s; }
+.btn-gerar-pdf:hover { background:#f0cc88; }
+.btn-reset { padding:9px 16px; background:var(--s2); color:var(--t1); border:1px solid var(--s3); border-radius:8px; font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s; }
+.btn-reset:hover { background:var(--s3); border-color:var(--gold-bd); }
 </style>
 </head>
 <body>
@@ -625,6 +706,7 @@ select option { background: var(--s1); color: var(--t1); }
   <div class="nav">
     <button class="ntab on" onclick="mudarAba('Prazos',this)">⏱️ Prazos</button>
     <button class="ntab"    onclick="mudarAba('Pecas',this)">🧠 Peças & IA</button>
+    <button class="ntab"    onclick="mudarAba('Contratos',this)">📋 Contratos</button>
   </div>
 
   <div id="statsBar" class="stats">
@@ -694,6 +776,80 @@ select option { background: var(--s1); color: var(--t1); }
         </div>
       </div>
     </div>
+
+    <!-- ABA CONTRATOS -->
+    <div class="sec" id="secContratos">
+      <div class="contratos-grid">
+        <div>
+          <div class="sh"><div class="stitle">Enviar Contrato para Análise</div></div>
+          <div class="papel-selector">
+            <label class="papel-label">Meu papel no contrato</label>
+            <div class="papel-opts">
+              <button class="papel-btn on" onclick="selecionarPapel('auto',this)">🤖 Automático</button>
+              <button class="papel-btn" onclick="selecionarPapel('comprador',this)">📥 Comprador</button>
+              <button class="papel-btn" onclick="selecionarPapel('vendedor',this)">📤 Vendedor</button>
+              <button class="papel-btn" onclick="selecionarPapel('neutro',this)">⚖️ Neutro</button>
+            </div>
+          </div>
+          <div class="upload-zone" id="uploadZoneContrato">
+            <input type="file" id="fileInputContrato" accept=".docx,.txt" onchange="processarContrato(event)">
+            <div class="uico">📜</div>
+            <div class="utitle">Arraste ou clique para enviar</div>
+            <div class="usub">DOCX ou TXT — compra e venda, aluguel, serviços, etc.</div>
+          </div>
+          <div class="loading-ia" id="loadingContrato">
+            <div class="spinner"></div>
+            <p>Analisando contrato…<br>Identificando cláusulas e riscos</p>
+          </div>
+        </div>
+        <div>
+          <div class="sh"><div class="stitle">Histórico de Contratos</div><div class="scnt" id="contratoCnt">0</div></div>
+          <p style="font-size:13px;color:var(--t3);margin-bottom:12px;line-height:1.5">Contratos analisados ficam armazenados para referência futura.</p>
+          <div id="historicoContratos"></div>
+        </div>
+      </div>
+
+      <div class="contrato-resultado" id="contratoResultado">
+        <div class="contrato-header">
+          <div class="ch-tipo" id="chTipo">—</div>
+          <div class="ch-meta">
+            <span id="chData">—</span><span id="chPartes">—</span><span class="ch-risco" id="chRisco">—</span>
+          </div>
+        </div>
+
+        <div class="resumo-exec">
+          <div class="re-ttl">📊 Resumo Executivo</div>
+          <div class="re-stats">
+            <div class="re-stat"><div class="re-num" id="reTotal">0</div><div class="re-lbl">Total de pontos</div></div>
+            <div class="re-stat"><div class="re-num" id="reCriticos">0</div><div class="re-lbl">🔴 Críticos</div></div>
+            <div class="re-stat"><div class="re-num" id="reAlertas">0</div><div class="re-lbl">🟡 Alertas</div></div>
+            <div class="re-stat"><div class="re-num" id="reLeves">0</div><div class="re-lbl">🟢 Leves</div></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--t1);margin-bottom:10px">⚠️ Cláusulas a Revisar</div>
+          <div class="clausulas-list" id="clausulasList"></div>
+        </div>
+
+        <div class="checklist-box">
+          <div class="cl-ttl">✓ Checklist de Ações</div>
+          <div class="cl-items" id="checklistItems"></div>
+        </div>
+
+        <div class="avisos-box">
+          <div class="av-ttl">ℹ️ Avisos Gerais</div>
+          <div class="av-items" id="avisosItems"></div>
+        </div>
+
+        <div class="notas-finais" id="notasFinais"></div>
+
+        <div class="contrato-acts">
+          <button class="btn-gerar-pdf" onclick="gerarPDFContrato()">📄 Gerar PDF</button>
+          <button class="btn-reset" onclick="limparAnaliseContrato()">🔄 Analisar Outro</button>
+        </div>
+      </div>
+    </div><!-- /secContratos -->
 
   </div><!-- /main -->
 </div><!-- /app -->
@@ -849,6 +1005,10 @@ let _textoArquivo = '', _analiseAtual = null;
 let _pontoIdx = -1, _pontoTxt = '';
 let _wppProcesso = null;
 
+// ════════ CONTRATOS ════════
+const SKH = 'mj_contratos_v5';
+let contratos = [], papelSelecionado = 'auto', _analiseContratoAtual = null;
+
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
 // ══════════════════════════════════════════════════════
@@ -923,6 +1083,7 @@ function entrarApp(email, demo, nome){
   carregarDados(email);
   verificarOllama();
   render();
+  initContratos();
 }
 
 function fazerLogout(){
@@ -1524,6 +1685,218 @@ function toast(msg){
   el.className = 'toast'; el.textContent = msg;
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 2800);
+}
+
+// ════════ CONTRATOS ════════
+
+// fetch RELATIVO — funciona no domínio do Vercel (mesma origem). NÃO usar localhost.
+async function chamarContratoAPI(body){
+  const r = await fetch('/api/analisar-contrato', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+function carregarContratos(){
+  const kh = (typeof modoDemo !== 'undefined' && modoDemo) ? SKH : SKH + '_' + (window._userEmail || _userEmail || 'anon');
+  try { contratos = JSON.parse(localStorage.getItem(kh)) || []; } catch { contratos = []; }
+  window._kh = kh;
+}
+function salvarContratos(){ localStorage.setItem(window._kh, JSON.stringify(contratos)); }
+function initContratos(){ carregarContratos(); renderHistoricoContratos(); }
+
+function selecionarPapel(papel, btn){
+  papelSelecionado = papel;
+  document.querySelectorAll('.papel-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+async function processarContrato(event){
+  const file = event.target.files[0]; if(!file) return;
+  document.getElementById('loadingContrato').classList.add('on');
+  document.getElementById('contratoResultado').classList.remove('on');
+
+  const ext    = file.name.split('.').pop().toLowerCase();
+  const isDOCX = ext === 'docx' || file.type.includes('wordprocessingml');
+
+  try {
+    let texto = '';
+    if (isDOCX) {
+      const ab = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer: ab });
+      texto = (result.value || '').trim();
+    } else {
+      texto = await file.text();
+    }
+    if (!texto || texto.length < 10) throw new Error('Não foi possível extrair texto do arquivo.');
+
+    const resp = await chamarContratoAPI({ texto, tipo: ext.toUpperCase(), papel: papelSelecionado, nomeArquivo: file.name });
+    if (!resp.ok) throw new Error(resp.erro || 'Erro na análise');
+
+    _analiseContratoAtual = resp.resultado;
+    _analiseContratoAtual.id = uid();
+    _analiseContratoAtual.arquivo = file.name;
+    _analiseContratoAtual.data_analise = new Date().toLocaleDateString('pt-BR');
+
+    contratos.unshift(_analiseContratoAtual);
+    salvarContratos();
+    mostrarAnaliseContrato(resp.resultado);
+    renderHistoricoContratos();
+  } catch (e) {
+    toast('❌ Erro: ' + e.message);
+    document.getElementById('contratoResultado').classList.remove('on');
+  }
+
+  document.getElementById('loadingContrato').classList.remove('on');
+  document.getElementById('fileInputContrato').value = '';
+}
+
+function mostrarAnaliseContrato(a){
+  document.getElementById('chTipo').textContent   = a.tipo_contrato || '—';
+  document.getElementById('chData').textContent   = '📅 ' + (a.data_assinatura || '—');
+  document.getElementById('chPartes').textContent = '👥 ' + (a.partes_count || '—') + ' parte(s)';
+  document.getElementById('chRisco').className     = 'ch-risco ' + (a.risco_geral || 'medio').toLowerCase();
+  document.getElementById('chRisco').textContent   = (a.risco_geral || 'MÉDIO');
+
+  const re = a.resumo_executivo || {};
+  document.getElementById('reTotal').textContent    = re.total_pontos || 0;
+  document.getElementById('reCriticos').textContent = re.criticos || 0;
+  document.getElementById('reAlertas').textContent  = re.alertas || 0;
+  document.getElementById('reLeves').textContent    = re.leves || 0;
+
+  const claus = (a.clausulas_problematicas || []).sort((x,y) => (x.prioridade||999) - (y.prioridade||999));
+  document.getElementById('clausulasList').innerHTML = claus.map((c, idx) => `
+    <div class="clausula-card">
+      <div class="cc-header" onclick="toggleClausula(${idx})">
+        <span class="cc-sev ${(c.severidade||'leve').toLowerCase()}">${c.severidade||'LEVE'}</span>
+        <div class="cc-titulo">${c.clausula||'—'}: ${c.titulo||'—'}</div>
+        <div class="cc-subtitle">${c.problema||'—'}</div>
+      </div>
+      <div class="cc-body" id="cc-${idx}">
+        ${c.lei_aplicavel ? `<div class="cc-section"><div class="cc-section-ttl">📋 Legislação Aplicável</div><div class="cc-lei">${c.lei_aplicavel}</div></div>` : ''}
+        <div class="cc-section"><div class="cc-section-ttl">⚠️ Problema Específico</div><div class="cc-problema">${c.problema||'—'}</div></div>
+        ${c.risco_reais ? `<div class="cc-section"><div class="cc-section-ttl">💰 Risco Financeiro</div><div class="cc-risco">${c.risco_reais}</div></div>` : ''}
+        ${c.impacto_partes ? `<div class="cc-section"><div class="cc-section-ttl">👥 Impacto nas Partes</div><div class="cc-problema">${c.impacto_partes}</div></div>` : ''}
+        ${c.texto_original ? `<div class="cc-section"><div class="cc-section-ttl">📝 Trecho Original</div><div class="cc-problema" style="font-family:'DM Mono',monospace;font-size:11px">"${c.texto_original}"</div></div>` : ''}
+        <div class="cc-section"><div class="cc-section-ttl">✏️ Ajuste Recomendado</div><div class="cc-ajuste">${c.ajuste_recomendado||'—'}</div></div>
+      </div>
+    </div>`).join('');
+
+  const cl = (a.checklist_acoes || []);
+  document.getElementById('checklistItems').innerHTML = cl.map((c, idx) => `
+    <div class="cl-item" id="cl-${idx}" onclick="toggleChecklistItem(${idx})">
+      <div class="cl-checkbox">✓</div>
+      <div class="cl-texto"><div class="cl-acao">${c.acao||'—'}</div><div class="cl-categoria">${c.categoria||'—'} · ${c.prazo||'—'}</div></div>
+    </div>`).join('');
+
+  const av = (a.avisos_gerais || []);
+  document.getElementById('avisosItems').innerHTML = av.map(x => `
+    <div class="av-item ${(x.tipo||'legal').toLowerCase()}">
+      <span class="av-item-tipo">${x.tipo||'—'}</span><strong>${x.titulo||'—'}</strong><br>${x.descricao||'—'}
+    </div>`).join('');
+
+  document.getElementById('notasFinais').textContent = a.notas_legais || 'Nenhuma observação adicional.';
+  document.getElementById('contratoResultado').classList.add('on');
+}
+
+function toggleClausula(idx){ document.getElementById('cc-'+idx).classList.toggle('on'); }
+function toggleChecklistItem(idx){ document.getElementById('cl-'+idx).classList.toggle('done'); }
+
+function renderHistoricoContratos(){
+  const hist = document.getElementById('historicoContratos');
+  document.getElementById('contratoCnt').textContent = contratos.length;
+  if (!contratos.length){ hist.innerHTML = `<div class="empty"><div class="ei">📄</div><p>Nenhum contrato analisado ainda.</p></div>`; return; }
+  hist.innerHTML = contratos.map(c => `
+    <div style="background:var(--s0);border-radius:9px;padding:10px 12px;margin-bottom:6px;border:1px solid var(--border);cursor:pointer"
+         onmouseover="this.style.background='var(--s2)'" onmouseout="this.style.background='var(--s0)'"
+         onclick="recarregarContrato('${c.id}')">
+      <strong style="font-size:13px;color:var(--t1);display:block">${c.tipo_contrato||'—'}</strong>
+      <span style="font-size:11px;color:var(--t3)">${c.arquivo||'—'} · ${c.data_analise||'—'}</span>
+    </div>`).join('');
+}
+
+function recarregarContrato(id){
+  const c = contratos.find(x => x.id === id); if(!c) return;
+  _analiseContratoAtual = c; mostrarAnaliseContrato(c);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function limparAnaliseContrato(){
+  document.getElementById('contratoResultado').classList.remove('on');
+  document.getElementById('fileInputContrato').value = '';
+  _analiseContratoAtual = null; papelSelecionado = 'auto';
+  document.querySelectorAll('.papel-btn').forEach((b,i) => { b.classList.remove('on'); if(i===0) b.classList.add('on'); });
+}
+
+// ════════ GERAR PDF (profissional, sem cara de IA) ════════
+function gerarPDFContrato(){
+  if (!_analiseContratoAtual){ toast('Nenhuma análise disponível.'); return; }
+  if (!window.jspdf || !window.jspdf.jsPDF){ toast('Biblioteca PDF não carregada.'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const a = _analiseContratoAtual;
+  const hoje = new Date();
+  const dataStr = `${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const margemEsq = 18, margemDir = 192, largura = margemDir - margemEsq;
+  let y = 20;
+
+  function novaPagina(h){ if (y + h > 280){ doc.addPage(); y = 20; } }
+  function escreve(texto, x, tam, estilo, alt, maxW){
+    doc.setFontSize(tam); doc.setFont('Helvetica', estilo);
+    doc.splitTextToSize(String(texto), maxW).forEach(linha => { novaPagina(alt); doc.text(linha, x, y); y += alt; });
+  }
+
+  doc.setDrawColor(180,140,70); doc.setLineWidth(0.6); doc.line(margemEsq, 15, margemDir, 15);
+  escreve('ANÁLISE JURÍDICA DE CONTRATO', margemEsq, 15, 'bold', 7, largura);
+  escreve(a.tipo_contrato || '—', margemEsq, 11, 'normal', 5.5, largura);
+  y += 2; doc.setDrawColor(210,210,210); doc.line(margemEsq, y, margemDir, y); y += 6;
+
+  [`Tipo do contrato: ${a.tipo_contrato || '—'}`,
+   `Data do contrato: ${a.data_assinatura || '—'}`,
+   `Partes envolvidas: ${a.partes_count || '—'}`,
+   `Avaliação de risco: ${a.risco_geral || '—'}`,
+   `Data desta análise: ${dataStr}`].forEach(l => escreve(l, margemEsq, 9.5, 'normal', 5, largura));
+  y += 3;
+
+  const re = a.resumo_executivo || {};
+  escreve('RESUMO EXECUTIVO', margemEsq, 12, 'bold', 6, largura); y += 1;
+  escreve(`Foram identificados ${re.total_pontos || 0} pontos relevantes: ${re.criticos || 0} críticos, ${re.alertas || 0} alertas e ${re.leves || 0} de menor gravidade.`, margemEsq, 9.5, 'normal', 5, largura);
+  if (re.principal_risco) escreve(`Principal ponto de atenção: ${re.principal_risco}`, margemEsq, 9.5, 'normal', 5, largura);
+  y += 4;
+
+  (a.clausulas_problematicas || []).length && (() => {
+    escreve('CLÁUSULAS A REVISAR', margemEsq, 12, 'bold', 6, largura); y += 1;
+    (a.clausulas_problematicas || []).forEach((c, idx) => {
+      y += 2; novaPagina(30);
+      escreve(`${idx+1}. ${c.clausula || ''} — ${c.titulo || ''}  [${c.severidade || ''}]`, margemEsq, 10.5, 'bold', 5.5, largura);
+      escreve(`O que foi identificado: ${c.problema || '—'}`, margemEsq+3, 9, 'normal', 4.8, largura-3);
+      if (c.lei_aplicavel) escreve(`Base legal: ${c.lei_aplicavel}`, margemEsq+3, 9, 'normal', 4.8, largura-3);
+      if (c.risco_reais)   escreve(`Risco envolvido: ${c.risco_reais}`, margemEsq+3, 9, 'normal', 4.8, largura-3);
+      escreve(`Ajuste recomendado: ${c.ajuste_recomendado || '—'}`, margemEsq+3, 9, 'italic', 4.8, largura-3);
+    });
+    y += 4;
+  })();
+
+  (a.checklist_acoes || []).length && (() => {
+    novaPagina(20); escreve('CHECKLIST DE AÇÕES', margemEsq, 12, 'bold', 6, largura); y += 1;
+    (a.checklist_acoes || []).forEach(c => escreve(`[  ] ${c.acao || '—'}  (${c.prazo || '—'})`, margemEsq, 9, 'normal', 5, largura));
+    y += 4;
+  })();
+
+  if (a.notas_legais){ novaPagina(20); escreve('OBSERVAÇÕES', margemEsq, 12, 'bold', 6, largura); y += 1; escreve(a.notas_legais, margemEsq, 9.5, 'normal', 5, largura); y += 4; }
+
+  novaPagina(25); doc.setDrawColor(210,210,210); doc.line(margemEsq, y, margemDir, y); y += 6;
+  escreve('Advogado(a) responsável: _________________________________', margemEsq, 9, 'normal', 6, largura);
+  escreve(`Local e data: __________________________, ${dataStr}`, margemEsq, 9, 'normal', 6, largura);
+  y += 2;
+  escreve('Documento de apoio à análise contratual. Recomenda-se revisão por profissional habilitado antes da assinatura. Nenhum contrato está isento de risco.', margemEsq, 8, 'italic', 4.2, largura);
+
+  const nomeSeguro = (a.tipo_contrato || 'contrato').replace(/[^\wÀ-ÿ]+/g, '_');
+  doc.save(`Analise_${nomeSeguro}_${dataStr.replace(/\//g,'-')}.pdf`);
+  toast('✅ PDF gerado!');
 }
 </script>
 </body>
