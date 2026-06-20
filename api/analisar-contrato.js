@@ -2,7 +2,7 @@
 // Vercel Serverless Function — análise jurídica de contratos via Gemini.
 // Aditivo: não depende de server.js. Lê GEMINI_API_KEY do ambiente do Vercel.
 
-const MODELO = 'gemini-1.5-flash';
+const MODELO = 'gemini-2.0-flash';
 
 function sanitizar(t) {
   if (typeof t !== 'string') return '';
